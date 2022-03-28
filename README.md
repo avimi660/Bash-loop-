@@ -24,3 +24,20 @@ no_matches=`wc -l temp_all_searches | awk '{ print $1 }'`; echo $gene_search_ter
 cat temp_all_searches >> gene_location_possum.txt;
 rm temp*;
 done
+
+
+# once it has run I need to check if everything has worked properly 
+ # QCing to make sure our code has worked as we intended it to. We’ve double checked that results_matches.txt has the same number of genes as in mito_genes.txt . Now we are going to use R to make sure that gene_location_possum.txt, has the same number of total matches as in results_matches.txt
+ 
+ # now I need to load R by typing R in the command line 
+ R
+ # make a results table to view in R 
+ results_table <-  read.table("results_matches.txt")
+ # <- is assigning a variable for results_table and remember to use quotes when talking about files. 
+ 
+ # tips - 
+ dim(results_table) will give me numbers the first number is the number of rows in the table and the second number is the number of columns. - the number in square brackets first just refers to how many lines of output are generated if there are massive tables. 
+ # to pull out a value specifically from the table 
+ name_of_table[row_number,column_number] 
+ # if i want to pull out a 
+
