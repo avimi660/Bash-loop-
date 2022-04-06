@@ -41,3 +41,55 @@ done
  name_of_table[row_number,column_number] 
  # if i want to pull out a 
 
+
+
+
+
+
+
+
+
+# new loop: 4th april
+
+zero_match_line_no=`wc -l zero_gene_matches.txt | awk '{ print $1 }'`
+
+for line_no in`seq 1 1 $zero_match_line_no1;
+ do echo $line_no;
+done 
+
+# to add in later
+line_no=42
+zero_match_gene=`head -n $line_no zero_matches.txt | tail -n 1 | awk '{ print $1 }'`
+
+product_name=`grep "gene="$zero_match_gene";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t'| head -n 1 | sed ' s/.*;product=//g' | sed 's/;protein_id=.*//g'`
+
+# 5th april
+# Shall we change to CDS regions to search for the genes in possums
+
+ # Need to first define our gene_search_term
+
+gene_search_term=COX10
+
+grep "gene="$gene_search_term";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t' > temp.gff
+
+# above we are searching the human genome portion for the term CDS and outputting it to temp gff file
+
+
+### And then we discovered the product name was still the same between humans and possums
+
+### We’ll work on how we might use this to find more genes
+ 
+# We won’t run the actual loop right now, but we will think about how we set it up to run to save us a bit of time later on. We are going to want to run this on all of our “zero_gene_matches.txt” genes
+zero_match_line_no=`wc -l zero_gene_matches.txt | awk '{ print $1 }'`
+ for line_no in `seq 1 1 $zero_match_line_no`;
+ do echo $line_no;
+done
+
+# zero_match_line getting word cont on this file for zero gene matches then piping that commannd to search the input file for the specified pattern 
+# We’ll test out our actual code on COX10, which is line 42 in the zero_gene_matches.txt file so…
+line_no=42
+
+zero_match_gene=`head -n $line_no zero_gene_matches.txt | tail -n 1 | awk '{ print $1 }'`
+
+product_name=`grep "gene="$zero_match_gene";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t' | head -n 1 | sed 's/.*;product=//g' | sed 's/;protein_id=.*//g'`
+ 
