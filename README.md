@@ -95,3 +95,93 @@ zero_match_gene=`head -n $line_no zero_gene_matches.txt | tail -n 1 | awk '{ pri
 
 product_name=`grep "gene="$zero_match_gene";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t' | head -n 1 | sed 's/.*;product=//g' | sed 's/;protein_id=.*//g'`
  
+ ## 6th april we are going to re run the whole loop incorporating search for the description, however we will trouble shoot a bit first
+ for mito_line in `seq 2 1 $no_mito_genes`;
+do gene_search_term=`head -n $mito_line mito_genes.txt | tail -n 1 | cut -f 4`;
+grep "ID=gene-"$gene_search_term";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' > temp;
+alt_search_terms=`head -n $mito_line mito_genes.txt | tail -n 1 | cut -f 5`;      no_alts=`echo $alt_search_terms | grep -o ";" | wc -l`;
+for alt_gene in `seq 1 1 $no_alts`; do alt_gene_name=`echo $alt_search_terms | cut -d ";" -f $alt_gene | sed 's/ //g'`; grep "ID=gene-"$alt_gene_name";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' >> temp; done;
+cat temp | sort | uniq > temp_all_searches;
+no_matches=`wc -l temp_all_searches | awk '{ print $1 }'`; echo $gene_search_term $no_matches >> results_matches.txt;
+cat temp_all_searches >> gene_location_possum.txt;
+rm temp*;
+done
+
+
+
+##
+no_matches=`wc -l temp_all_searches | awk '{ print $1 }'`
+
+if [ `wc -l temp_all_searches | awk '{ print $1 }'` -lt 1 ];
+ then product_name=`grep "gene="$gene_search_term";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t' | head -n 1 | sed 's/.*;product=/;product=/g' | sed 's/;protein_id=.*//g'`
+ grep "$product_name" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff
+ fi
+ 
+
+
+grep "$product_name" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep ";Parent=gene-" | sed 's/.";Parent=gene-//g' | sed 's/;.*//g'
+
+# 7th april 
+# today we are going to try to get the loop ready to re run incorperating the search for the product description. However we will trouble shoot a bit first before running the whole loop.
+# we are using COX10 gene as an example because we know that is hasnt found a match bassed on the gene name. using COX10 and then doing -N we know that it is at line 165 so set the mito_line variable to 165
+
+mito_line=165
+
+#then we run the stuff in our for loop without actually running it as a for loop until the following line which is where we will chuck in our additional code. 
+
+cat temp | sort | uniq > temp_all_searches 
+
+# the first thing we need to do is to run the stuff when there is no matches 
+# for our loops we do: for something in something_else; do this_thing; done
+
+#for if statememnts 
+if [ this thing is true ]; then this_thing; fi
+
+# for example, the following thing says if the number of lines in our temp_all_searches file is less than 1 (shown by the -lt 1) then echo the gene_search_term name. 
+
+if [ `wc -l temp_all_searches | awk '{ print $1 }'` -lt 1 ]
+ then echo $gene_search_term
+fi
+
+# OK what is going to be our actual statement 
+
+if [ `wc -l temp_all_searches | awk '{ print $1 }'` -lt 1 ]
+ then product_name=`grep "gene="$gene_search_term";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t' | head -n 1 | sed 's/.*;product=/;product=/g' | sed 's/;protein_id=.*//g'`;
+ grep "$product_name" nesi/nobackup/uoo03398/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep ";Parent=gene-" | sed 's/.*;Parent=gene-//g' | sed 's/;.*//g' > temp_product_search
+fi
+ 
+# for each gene name we have found from the product_search above, we will then look for this in the possum genome for the full gene, and then save these into the temp  file, then make sure we only have uniq matches and then we can keep going with for loop as it was previously written 
+
+# full loop below 
+ 
+ for mito_line in `seq 2 1 $no_mito_genes`;
+do gene_search_term=`head -n $mito_line mito_genes.txt | tail -n 1 | cut -f 4`;
+grep "ID=gene-"$gene_search_term";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' > temp;
+alt_search_terms=`head -n $mito_line mito_genes.txt | tail -n 1 | cut -f 5`;      no_alts=`echo $alt_search_terms | grep -o ";" | wc -l`;
+for alt_gene in `seq 1 1 $no_alts`; do alt_gene_name=`echo $alt_search_terms | cut -d ";" -f $alt_gene | sed 's/ //g'`; grep "ID=gene-"$alt_gene_name";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' >> temp; done;
+cat temp | sort | uniq > temp_all_searches;
+if [ `wc -l temp_all_searches | awk '{ print $1 }'` -lt 1 ]
+ then product_name=`grep "gene="$gene_search_term";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t' | head -n 1 | sed 's/.*;product=/;product=/g' | sed 's/;protein_id=.*//g'`;
+ grep "$product_name" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep ";Parent=gene-" | sed 's/.*;Parent=gene-//g' | sed 's/;.*//g' > temp_product_search;
+no_product_matches=`wc -l temp_product_search | awk '{ print $1 }'`
+ for product_match_line in `seq 1 1 $no_product_matches`;
+ do product_match=`head -n $product_match_line temp_product_search | tail -n 1` 
+ grep "ID=gene-"$product_match";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' >> temp;
+done
+cat temp
+fi
+no_matches=`wc -l temp_all_searches | awk '{ print $1 }'`; echo $gene_search_term $no_matches >> results_matches.txt;
+cat temp_all_searches >> gene_location_possum.txt;
+rm temp*;
+done
+
+
+## this was making a section to add into the loop above 
+no_product_matches=`wc -l temp_product_search | awk '{ print $1 }'`
+ for product_match_line in `seq 1 1 $no_product_matches`;
+ do product_match=`head -n $product_match_line temp_product_search | tail -n 1`
+ 
+ grep "ID=gene-"$product_match";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' >> temp;
+done
+cat temp | sort | uniq > temp_all_searches;
+fi
