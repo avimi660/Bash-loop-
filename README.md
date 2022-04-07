@@ -1,4 +1,6 @@
+```
 # Bash-loop-
+\
 #!/bin/bash -e
 
 #SBATCH -A uoo03398 # Account number
