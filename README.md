@@ -168,10 +168,10 @@ no_product_matches=`wc -l temp_product_search | awk '{ print $1 }'`
  do product_match=`head -n $product_match_line temp_product_search | tail -n 1` 
  grep "ID=gene-"$product_match";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' >> temp;
 done
-cat temp
+cat temp | sort | uniq > temp_all_searches
 fi
-no_matches=`wc -l temp_all_searches | awk '{ print $1 }'`; echo $gene_search_term $no_matches >> results_matches.txt;
-cat temp_all_searches >> gene_location_possum.txt;
+no_matches=`wc -l temp_all_searches | awk '{ print $1 }'`;
+echo $gene_search_term $no_matches >> results_matches.txt;
 rm temp*;
 done
 
