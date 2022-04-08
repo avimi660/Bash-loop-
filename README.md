@@ -159,7 +159,6 @@ do gene_search_term=`head -n $mito_line mito_genes.txt | tail -n 1 | cut -f 4`;
 grep "ID=gene-"$gene_search_term";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' > temp;
 alt_search_terms=`head -n $mito_line mito_genes.txt | tail -n 1 | cut -f 5`;      no_alts=`echo $alt_search_terms | grep -o ";" | wc -l`;
 for alt_gene in `seq 1 1 $no_alts`; do alt_gene_name=`echo $alt_search_terms | cut -d ";" -f $alt_gene | sed 's/ //g'`; grep "ID=gene-"$alt_gene_name";" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep $'\t'gene$'\t' >> temp; done;
-cat temp | sort | uniq > temp_all_searches;
 if [ `wc -l temp_all_searches | awk '{ print $1 }'` -lt 1 ]
  then product_name=`grep "gene="$gene_search_term";" GCF_000001405.39_GRCh38.p13_genomic.gff | grep $'\t'CDS$'\t' | head -n 1 | sed 's/.*;product=/;product=/g' | sed 's/;protein_id=.*//g'`;
  grep "$product_name" /nesi/nobackup/uoo03398/michael/possum_genome_master/GCF_011100635.1_mTriVul1.pri_genomic.gff | grep ";Parent=gene-" | sed 's/.*;Parent=gene-//g' | sed 's/;.*//g' > temp_product_search;
